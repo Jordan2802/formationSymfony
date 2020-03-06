@@ -8,6 +8,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Image;
 use App\Entity\Booking;
+use App\Entity\Comment;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -120,7 +121,6 @@ class AppFixtures extends Fixture
             $endDate    = (clone $startDate)->modify("+$duration days");
             $amount     = $ad->getPrice() * $duration;
             $booker     = $users[mt_rand(0, count($users) -1)];
-
             $comment    = $faker->paragraph();
 
             $booking->setBooker($booker)
@@ -132,6 +132,16 @@ class AppFixtures extends Fixture
                     ->setComment($comment);
 
                     $manager->persist($booking);
+
+                    //gestion des commentaires
+                    if(mt_rand(0, 1)) {
+                        $comment = new Comment();
+                        $comment->setContent($faker->paragraph())
+                                ->setRating(mt_rand(1, 5))
+                                ->setAuthor($booker)
+                                ->setAd($ad);
+                        $manager->persist($comment);
+                    }
         }
             
                 $manager->persist($ad);
